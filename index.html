@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Program Antrian</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f5f5f5;
+    }
+    .container {
+      text-align: center;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+      width: 300px;
+    }
+    .container h2 {
+      margin-bottom: 10px;
+    }
+    .btn {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      color: white;
+      background-color: #4CAF50;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #45a049;
+    }
+    .input-field {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      z-index: 1000;
+      width: 400px;
+    }
+    .popup h3 {
+      margin-top: 0;
+    }
+    .popup .queue-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .queue-table th, .queue-table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Program Antrian</h2>
+  <input type="number" id="nilaiInput" class="input-field" placeholder="Masukkan nilai">
+  <button class="btn" onclick="enqueue()">Tambah Antrian (Enqueue)</button>
+  <button class="btn" onclick="dequeue()">Hapus Antrian (Dequeue)</button>
+  <button class="btn" onclick="displayQueue()">Tampilkan Antrian</button>
+  <button class="btn" onclick="countQueue()">Hitung Jumlah Antrian</button>
+  <p id="queueStatus">Antrian kosong</p>
+</div>
+
+<div class="popup-overlay" onclick="closePopup()"></div>
+<div class="popup" id="popup">
+  <h3>Visualisasi Antrian</h3>
+  <table class="queue-table" id="queueTable">
+    <tr>
+      <th>Index</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+    </tr>
+    <tr>
+      <td>Isi</td>
+    </tr>
+  </table>
+  <p>Index Front = <span id="frontIndex">0</span></p>
+  <p>Index Rear = <span id="rearIndex">0</span></p>
+  <button class="btn" onclick="closePopup()">Tutup</button>
+</div>
+
+<script>
+  let queue = [];
+  let front = 0;
+  let rear = -1;
+
+  function enqueue() {
+    const nilai = document.getElementById('nilaiInput').value;
+    if (nilai) {
+      queue.push(nilai);
+      rear++;
+      updateQueueStatus();
+      showPopup();
+    } else {
+      alert('Masukkan nilai untuk menambahkan ke antrian.');
+    }
+  }
+
+  function dequeue() {
+    if (queue.length === 0) {
+      alert('Antrian kosong!');
+    } else {
+      queue.shift();
+      rear--;
+      updateQueueStatus();
+      showPopup();
+    }
+  }
+
+  function displayQueue() {
+    if (queue.length === 0) {
+      alert('Antrian kosong!');
+    } else {
+      showPopup();
+    }
+  }
+
+  function countQueue() {
+    alert('Jumlah antrian saat ini: ' + queue.length);
+  }
+
+  function updateQueueStatus() {
+    document.getElementById('queueStatus').innerText = queue.length > 0 ? 'Antrian saat ini: ' + queue.join(', ') : 'Antrian kosong';
+  }
+
+  function showPopup() {
+    document.querySelector('.popup-overlay').style.display = 'block';
+    document.getElementById('popup').style.display = 'block';
+
+    const queueRow = document.querySelector('.queue-table tr:nth-child(2)');
+    queueRow.innerHTML = '<td>Isi</td>';
+    for (let i = 0; i < 5; i++) {
+      queueRow.innerHTML += `<td>${queue[i] || ''}</td>`;
+    }
+
+    document.getElementById('frontIndex').innerText = front + 1;
+    document.getElementById('rearIndex').innerText = rear + 1;
+  }
+
+  function closePopup() {
+    document.querySelector('.popup-overlay').style.display = 'none';
+    document.getElementById('popup').style.display = 'none';
+  }
+</script>
+
+</body>
+</html>
